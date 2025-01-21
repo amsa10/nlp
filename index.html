@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Report</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Fixed Header with Logos and Buttons -->
+<header class="sticky-header">
+    <div class="logo-container">
+        <img src="/static/logo1.png" alt="Logo 1" class="logo" width="50">
+        <img src="/static/logo2.png" alt="Logo 2" class="logo" width="50">
+    </div>
+    <div class="buttons">
+        <button onclick="location.href='/'">Back to Home</button>
+        <button onclick="location.href='/analytics'">Analytics</button>
+        <button onclick="location.href='/ereports'">ERI Reports</button>
+    </div>
+</header>
+
+<!-- Chat-like Report Content Area -->
+<div id="chatContainer" class="chat-container">
+    <!-- Placeholder for Report -->
+    <div id="chatContent" class="chat-content"></div>
+</div>
+
+<!-- Report Generation Form -->
+<div class="report-form-container">
+    <h1>Generate Your Report</h1>
+    <form id="reportForm">
+        <label for="topic">Topic:</label>
+        <input type="text" id="topic" name="topic" placeholder="Enter report topic" required>
+        <button type="submit">Generate Report</button>
+    </form>
+</div>
+
+<script>
+document.getElementById("reportForm").addEventListener("submit", async function(event) {
+    event.preventDefault();  // Prevent form submission
+
+    const topic = document.getElementById("topic").value;
+
+    // Send the topic to the backend
+    const response = await fetch("/generate-report/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ topic })
+    });
+
+    const data = await response.json();
+
+    // Get the generated report text with HTML formatting
+    const reportText = data.report;
+
+    // Insert the generated report into the chat content area (as HTML)
+    const chatContent = document.getElementById("chatContent");
+    chatContent.innerHTML = reportText;  // Inject HTML content directly
+
+    // Scroll to the bottom of the content to view the latest report
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+});
+</script>
+
+</body>
+</html>
