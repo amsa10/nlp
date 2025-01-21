@@ -5,10 +5,8 @@ import openai
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
-
-# Retrieve the OpenAI API key from environment variables
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 if openai.api_key is None:
@@ -23,7 +21,7 @@ class ReportRequest(BaseModel):
 async def generate_report(request: ReportRequest):
     topic = request.topic
 
-    # Define the GPT prompt with HTML-like structure for headings, paragraphs, and lists
+    # Define the GPT-4 prompt with HTML-like structure for the report
     prompt = f"""
     Напишите академическую статью по теме '{topic}' на академическом русском языке. Следуйте указанной структуре:
     1. Введение
@@ -41,9 +39,8 @@ async def generate_report(request: ReportRequest):
     """
 
     try:
-        # Send the prompt to the OpenAI API to generate a report using GPT-4
         response = openai.Completion.create(
-            model="gpt-4",  # Use GPT-4 instead of GPT-3
+            model="gpt-4",
             prompt=prompt,
             max_tokens=1500,
             n=1,
@@ -51,11 +48,9 @@ async def generate_report(request: ReportRequest):
             temperature=0.7
         )
 
-        # Get the generated text and clean up if necessary
         report = response.choices[0].text.strip()
-
-        # Return the report as HTML (directly without plain text)
         return {"report": report}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating report: {str(e)}")
+
